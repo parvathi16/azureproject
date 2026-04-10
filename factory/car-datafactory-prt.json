@@ -1,0 +1,9 @@
+{
+	"name": "car-datafactory-prt",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "063ebbe8-980e-494e-87db-7ea492cbe492",
+		"tenantId": "665527ba-0928-4def-a222-cdae0f896fec"
+	}
+}
