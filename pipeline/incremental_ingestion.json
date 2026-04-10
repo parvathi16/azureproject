@@ -222,6 +222,8 @@
 						"referenceName": "json_cdc",
 						"type": "DatasetReference",
 						"parameters": {
+							"container": "bronze",
+							"path": "dimuser",
 							"file": "empty.json"
 						}
 					}
@@ -231,6 +233,8 @@
 						"referenceName": "Parquet_adls",
 						"type": "DatasetReference",
 						"parameters": {
+							"container": "bronze",
+							"path": "dimuser",
 							"file": "cdc.json"
 						}
 					}
