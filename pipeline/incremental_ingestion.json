@@ -223,7 +223,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container": "bronze",
-							"path": "dimuser",
+							"path": "cdc",
 							"file": "empty.json"
 						}
 					}
@@ -234,7 +234,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container": "bronze",
-							"path": "dimuser",
+							"path": "cdc",
 							"file": "cdc.json"
 						}
 					}
