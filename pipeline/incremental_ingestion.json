@@ -221,7 +221,7 @@
 							}
 						},
 						{
-							"name": "update_cdc_copy",
+							"name": "update_cdc",
 							"type": "Copy",
 							"dependsOn": [
 								{
