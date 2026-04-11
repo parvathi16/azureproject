@@ -136,6 +136,8 @@
 			{
 				"name": "CheckCopyCount",
 				"type": "IfCondition",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "CopyAZureDBtoADLS",
@@ -168,6 +170,7 @@
 									"referenceName": "Parquet_adls",
 									"type": "DatasetReference",
 									"parameters": {
+										"container": "bronze",
 										"path": {
 											"value": "@pipeline().parameters.table",
 											"type": "Expression"
