@@ -93,7 +93,7 @@
 											"source": {
 												"type": "AzureSqlSource",
 												"sqlReaderQuery": {
-													"value": "@concat('select *  from ',item().schema,'.', item().table, ' where ', item().cdc, ' > ''', if(empty(item().from_dt),activity('Lookup_cdc').output.value[0].cdc,item().from_dt),'''')\n",
+													"value": "@concat('select *  from ',item().schema,'.', item().table, ' where ', item().cdc, ' > ''', if(empty(item().from_dt),activity('Lookup_cdc').output.value[0].cdc,item().from_dt),'''')",
 													"type": "Expression"
 												},
 												"queryTimeout": "02:00:00",
