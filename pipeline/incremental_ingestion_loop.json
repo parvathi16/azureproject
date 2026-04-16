@@ -8,6 +8,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.items",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "Lookup_cdc",
@@ -53,12 +57,6 @@
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "Lookup_cdc",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								},
-								{
 									"activity": "Lookup_new_rec_count",
 									"dependencyConditions": [
 										"Succeeded"
@@ -95,7 +93,7 @@
 											"source": {
 												"type": "AzureSqlSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{pipeline().parameters.schema}.@{pipeline().parameters.table} where @{pipeline().parameters.cdc} > '@{if(empty(pipeline().parameters.from_dt),activity('Lookup_cdc').output.value[0].cdc,pipeline().parameters.from_dt)}'",
+													"value": "select * from @{item().schema}.@{item().table} where @{item().cdc} > '@{if(empty(item().from_dt),activity('Lookup_cdc').output.value[0].cdc,item().from_dt)}'",
 													"type": "Expression"
 												},
 												"queryTimeout": "02:00:00",
@@ -133,11 +131,11 @@
 												"parameters": {
 													"container": "bronze",
 													"path": {
-														"value": "@pipeline().parameters.table",
+														"value": "@{item().table}",
 														"type": "Expression"
 													},
 													"file": {
-														"value": "@concat(pipeline().parameters.table,'_',formatDateTime(variables('current'),'yyyyMMddHHmmss'))",
+														"value": "@concat(item().table,'_',formatDateTime(variables('current'),'yyyyMMddHHmmss'))",
 														"type": "Expression"
 													}
 												}
@@ -189,7 +187,7 @@
 												{
 													"type": "Query",
 													"text": {
-														"value": "select max(@{pipeline().parameters.cdc}) as cdc from @{pipeline().parameters.schema}.@{pipeline().parameters.table}",
+														"value": "select max(@{item().cdc}) as cdc from @{item().schema}.@{item().table}",
 														"type": "Expression"
 													}
 												}
@@ -255,7 +253,7 @@
 												"parameters": {
 													"container": "bronze",
 													"path": {
-														"value": "@{concat(pipeline().parameters.table,'_cdc')}",
+														"value": "@{concat(item().table,'_cdc')}",
 														"type": "Expression"
 													},
 													"file": "empty.json"
@@ -269,7 +267,7 @@
 												"parameters": {
 													"container": "bronze",
 													"path": {
-														"value": "@{concat(pipeline().parameters.table,'_cdc')}",
+														"value": "@{concat(item().table,'_cdc')}",
 														"type": "Expression"
 													},
 													"file": "cdc.json"
@@ -283,7 +281,14 @@
 						{
 							"name": "Lookup_new_rec_count",
 							"type": "Lookup",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Lookup_cdc",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -296,7 +301,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select count(*) as rec_count from @{pipeline().parameters.schema}.@{pipeline().parameters.table} where @{pipeline().parameters.cdc} > '@{if(empty(pipeline().parameters.from_dt),activity('Lookup_cdc').output.value[0].cdc,pipeline().parameters.from_dt)}'",
+										"value": "select count(*) as rec_count from @{item().schema}.@{item().table} where @{item().cdc} > '@{if(empty(item().from_dt),activity('Lookup_cdc').output.value[0].cdc,item().from_dt)}'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -314,9 +319,16 @@
 			}
 		],
 		"parameters": {
-			"input": {
+			"items": {
 				"type": "array",
-				"defaultValue": "[  {    \"schema\":\"dbo\",    \"table\": \"dimuser\",    \"cdc\":\"updated_at\",    \"from_dt\",\"\"  }  ]"
+				"defaultValue": [
+					{
+						"schema": "dbo",
+						"table": "dimuser",
+						"cdc": "updated_at",
+						"from_dt": ""
+					}
+				]
 			}
 		},
 		"variables": {
