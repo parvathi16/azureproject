@@ -187,7 +187,7 @@
 												{
 													"type": "Query",
 													"text": {
-														"value": "select max(@{item().cdc}) as cdc from @{item().schema}.@{item().table}",
+														"value": "@concat('select max(' , item().cdc , ') as cdc from ' , item().schema, ',', item().table)",
 														"type": "Expression"
 													}
 												}
